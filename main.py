@@ -45,7 +45,7 @@ def load_vgg(sess, vgg_path):
 
 tests.test_load_vgg(load_vgg, tf)
 
-import tensorflow.python.keras
+import keras
 def layers(vgg_layer3_out, vgg_layer4_out, vgg_layer7_out, num_classes):
     """
     Create the layers for a fully convolutional network.  Build skip-layers using the vgg layers.
@@ -57,25 +57,25 @@ def layers(vgg_layer3_out, vgg_layer4_out, vgg_layer7_out, num_classes):
     """
     # TODO: Implement function
     l7_conv = tf.layers.conv2d(vgg_layer7_out, num_classes, 1, 1,
-                                       padding='same',  kernel_initializer= tf.random_normal_initializer(stddev=0.01),
+                               padding='same',  kernel_initializer= tf.random_normal_initializer(stddev=0.01),
 
-                                       kernel_regularizer=tf.contrib.layers.l2_regularizer(1e-3))
+                               kernel_regularizer=tf.contrib.layers.l2_regularizer(1e-3))
     conv1 = tf.layers.conv2d_transpose(l7_conv, num_classes, 4, 2,
-                                        padding='same', kernel_initializer= tf.random_normal_initializer(stddev=0.01),
-                                        kernel_regularizer=tf.contrib.layers.l2_regularizer(1e-3))
-    l4_conv = tf.layers.conv2d(vgg_layer4_out, num_classes, 1, 1,
                                        padding='same', kernel_initializer= tf.random_normal_initializer(stddev=0.01),
                                        kernel_regularizer=tf.contrib.layers.l2_regularizer(1e-3))
+    l4_conv = tf.layers.conv2d(vgg_layer4_out, num_classes, 1, 1,
+                               padding='same', kernel_initializer= tf.random_normal_initializer(stddev=0.01),
+                               kernel_regularizer=tf.contrib.layers.l2_regularizer(1e-3))
     skip1 = tf.add(conv1, l4_conv)
     #output = keras.layers.UpSampling2D(size=(2,2),     data_format=None,interpolation='bilinear')(output)
 
 
     conv2 = tf.layers.conv2d_transpose(skip1, num_classes, 4, 2,
                                        padding='same', kernel_initializer= tf.random_normal_initializer(stddev=0.01),
-                                        kernel_regularizer=tf.contrib.layers.l2_regularizer(1e-3))
-    l3_conv = tf.layers.conv2d(vgg_layer3_out, num_classes, 1, 1,
-                                       padding='same', kernel_initializer= tf.random_normal_initializer(stddev=0.01),
                                        kernel_regularizer=tf.contrib.layers.l2_regularizer(1e-3))
+    l3_conv = tf.layers.conv2d(vgg_layer3_out, num_classes, 1, 1,
+                               padding='same', kernel_initializer= tf.random_normal_initializer(stddev=0.01),
+                               kernel_regularizer=tf.contrib.layers.l2_regularizer(1e-3))
     skip_3 = tf.add(conv2, l3_conv)
     output = tf.layers.conv2d_transpose(skip_3, num_classes, 16, 8,
                                         padding='same', kernel_initializer= tf.random_normal_initializer(stddev=0.01),
@@ -139,47 +139,62 @@ def run():
     tests.test_for_kitti_dataset(data_dir)
     epochs = 100
     batch_size = 10
-    # # Download pretrained vgg model
+    # Download pretrained vgg model
     # helper.maybe_download_pretrained_vgg(data_dir)
 
     # OPTIONAL: Train and Inference on the cityscapes dataset instead of the Kitti dataset.
     # You'll need a GPU with at least 10 teraFLOPS to train on.
     #  https://www.cityscapes-dataset.com/
 
+
+    # TODO: try fix the error parsing: cannot parse file ".....saved_mode.pb"
+    # with tf.Session() as sess:
+    #     # Path to vgg model
+    #     vgg_path = os.path.join(data_dir, 'vgg')
+    #     # Create function to get batches
+    #     get_batches_fn = helper.gen_batch_function(os.path.join(data_dir, 'data_road/training'), image_shape)
+    #
+    #     input, keep_prob, layer3, layer4, layer7 = load_vgg(sess, vgg_path)
+    #
+    #     output = layers(layer3, layer4, layer7, num_classes)
+    #
+    #     correct_label = tf.placeholder(dtype=tf.float32, shape=(None, None, None, num_classes))
+    #     learning_rate = tf.placeholder(dtype=tf.float32)
+    #     logits, train_op, cross_entropy_loss = optimize(output, correct_label, learning_rate, num_classes)
+    #     sess.run(tf.global_variables_initializer())
+    #     saver = tf.train.Saver()  # Simple model saver
+    #
+    #
+    #     train_nn(sess, epochs, batch_size, get_batches_fn, train_op, cross_entropy_loss, input, correct_label,
+    #              keep_prob, learning_rate)
+    #     # Save inference data using helper.save_inference_samples
+    #     saver.save(sess, './model')
+    #     helper.save_inference_samples(runs_dir, data_dir, sess, image_shape, logits, keep_prob, input)
+    #     # OPTIONAL: Augment Images for better results
+    #     #  https://datascience.stackexchange.com/questions/5224/how-to-prepare-augment-images-for-neural-network
+    #
+    #     # TODO: Build NN using load_vgg, layers, and optimize function
+    #
+    #     # TODO: Train NN using the train_nn function
+    #
+    #     # TODO: Save inference data using helper.save_inference_samples
+    #     #  helper.save_inference_samples(runs_dir, data_dir, sess, image_shape, logits, keep_prob, input_image)
+    #
+    #     # OPTIONAL: Apply the trained model to a video
+
+    import tensorflow as tf
+    import sys
+    from tensorflow.python.platform import gfile
+    from tensorflow.core.protobuf import saved_model_pb2
+    from tensorflow.python.util import compat
+
     with tf.Session() as sess:
-        # saved_model.pb
-        # Path to vgg model
-        vgg_path = os.path.join(data_dir, 'vgg')
-        # Create function to get batches
-        get_batches_fn = helper.gen_batch_function(os.path.join(data_dir, 'data_road/training'), image_shape)
-
-        input, keep_prob, layer3, layer4, layer7 = load_vgg(sess, vgg_path)
-
-        output = layers(layer3, layer4, layer7, num_classes)
-
-        correct_label = tf.placeholder(dtype=tf.float32, shape=(None, None, None, num_classes))
-        learning_rate = tf.placeholder(dtype=tf.float32)
-        logits, train_op, cross_entropy_loss = optimize(output, correct_label, learning_rate, num_classes)
-        sess.run(tf.global_variables_initializer())
-        saver = tf.train.Saver()  # Simple model saver
-
-
-        train_nn(sess, epochs, batch_size, get_batches_fn, train_op, cross_entropy_loss, input, correct_label,
-                 keep_prob, learning_rate)
-        # Save inference data using helper.save_inference_samples
-        saver.save(sess, './model')
-        helper.save_inference_samples(runs_dir, data_dir, sess, image_shape, logits, keep_prob, input)
-        # OPTIONAL: Augment Images for better results
-        #  https://datascience.stackexchange.com/questions/5224/how-to-prepare-augment-images-for-neural-network
-
-        # TODO: Build NN using load_vgg, layers, and optimize function
-
-        # TODO: Train NN using the train_nn function
-
-        # TODO: Save inference data using helper.save_inference_samples
-        #  helper.save_inference_samples(runs_dir, data_dir, sess, image_shape, logits, keep_prob, input_image)
-
-        # OPTIONAL: Apply the trained model to a video
+        model_filename ='./data/vgg/saved_model.pb'
+        with gfile.FastGFile(model_filename, 'rb') as f:
+            data = compat.as_bytes(f.read())
+            sm = saved_model_pb2.SavedModel()
+            sm.ParseFromString(data)
+            g_in = tf.import_graph_def(sm.meta_graphs[0].graph_def)
 
 
 if __name__ == '__main__':
