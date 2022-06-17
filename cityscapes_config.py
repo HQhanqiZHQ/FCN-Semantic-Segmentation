@@ -1,4 +1,4 @@
-EPOCHS = 60
+EPOCHS = 80
 BATCH_SIZE = 25
 NUM_CLASSES = 29
 IS_TRAIN = True
@@ -8,7 +8,7 @@ L2_REG = 1e-2
 STDEV = 1e-3
 
 DATA_DIR = 'data\leftImg8bit_trainvaltest'
-VIDEO_DIR = 'data\leftImg8bit_demoVideo\leftImg8bit\demoVideo\stuttgart_02'
+# VIDEO_DIR = 'data\leftImg8bit_demoVideo\leftImg8bit\demoVideo\stuttgart_02'
 RUNS_DIR = 'runs'
 
 DEFAULT_SAVE_DIR = ''
