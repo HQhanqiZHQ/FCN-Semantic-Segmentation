@@ -1,4 +1,7 @@
 # Semantic Segmentation
+
+**#Extract data_road.zip, leftImg8bit_trainvaltest.zip, vgg.zip to data directory First!!!!!!!!!!!!!!!**
+
 ### Introduction
 In this project, you'll label the pixels of a road in images using a Fully Convolutional Network (FCN).
 
