@@ -10,6 +10,7 @@ from sklearn.utils import shuffle
 import random
 import time
 
+
 def get_label_info():
     """
     Retrieve the class names and label values for the selected dataset.
@@ -34,7 +35,8 @@ def get_label_info():
         # Do not modify these IDs, since exactly these IDs are expected by the
         # evaluation server.
 
-        'trainId',  # Feel free to modify these IDs as suitable for your method. Then create
+        'trainId',
+        # Feel free to modify these IDs as suitable for your method. Then create
         # ground truth images with train IDs, using the tools provided in the
         # 'preparation' folder. However, make sure to validate or submit results
         # to our evaluation server using the regular IDs above!
@@ -47,12 +49,15 @@ def get_label_info():
 
         'category',  # The name of the category that this label belongs to
 
-        'categoryId',  # The ID of this category. Used to create ground truth images
+        'categoryId',
+        # The ID of this category. Used to create ground truth images
         # on category level.
 
-        'hasInstances',  # Whether this label distinguishes between single instances or not
+        'hasInstances',
+        # Whether this label distinguishes between single instances or not
 
-        'ignoreInEval',  # Whether pixels having this class as ground truth label are ignored
+        'ignoreInEval',
+        # Whether pixels having this class as ground truth label are ignored
         # during evaluations or not
 
         'color',  # The color of this label
@@ -62,7 +67,8 @@ def get_label_info():
         #       name                     id    trainId   category            catId     hasInstances   ignoreInEval   color
         Label('unlabeled', 0, 255, 'void', 0, False, True, (0, 0, 0)),
         Label('ego vehicle', 1, 255, 'void', 0, False, True, (0, 0, 0)),
-        Label('rectification border', 2, 255, 'void', 0, False, True, (0, 0, 0)),
+        Label('rectification border', 2, 255, 'void', 0, False, True,
+              (0, 0, 0)),
         Label('out of roi', 3, 255, 'void', 0, False, True, (0, 0, 0)),
         Label('static', 4, 255, 'void', 0, False, True, (0, 0, 0)),
         Label('dynamic', 5, 255, 'void', 0, False, True, (111, 74, 0)),
@@ -74,12 +80,16 @@ def get_label_info():
         Label('building', 11, 2, 'construction', 2, False, False, (70, 70, 70)),
         Label('wall', 12, 3, 'construction', 2, False, False, (102, 102, 156)),
         Label('fence', 13, 4, 'construction', 2, False, False, (190, 153, 153)),
-        Label('guard rail', 14, 255, 'construction', 2, False, True, (180, 165, 180)),
-        Label('bridge', 15, 255, 'construction', 2, False, True, (150, 100, 100)),
-        Label('tunnel', 16, 255, 'construction', 2, False, True, (150, 120, 90)),
+        Label('guard rail', 14, 255, 'construction', 2, False, True,
+              (180, 165, 180)),
+        Label('bridge', 15, 255, 'construction', 2, False, True,
+              (150, 100, 100)),
+        Label('tunnel', 16, 255, 'construction', 2, False, True,
+              (150, 120, 90)),
         Label('pole', 17, 5, 'object', 3, False, False, (153, 153, 153)),
         Label('polegroup', 18, 255, 'object', 3, False, True, (153, 153, 153)),
-        Label('traffic light', 19, 6, 'object', 3, False, False, (250, 170, 30)),
+        Label('traffic light', 19, 6, 'object', 3, False, False,
+              (250, 170, 30)),
         Label('traffic sign', 20, 7, 'object', 3, False, False, (220, 220, 0)),
         Label('vegetation', 21, 8, 'nature', 4, False, False, (107, 142, 35)),
         Label('terrain', 22, 9, 'nature', 4, False, False, (152, 251, 152)),
@@ -98,10 +108,11 @@ def get_label_info():
     ]
 
     seen = set()
-    label_list = list(map(lambda x : x[7], labels))
+    label_list = list(map(lambda x: x[7], labels))
     label_values = [x for x in label_list if not (x in seen or seen.add(x))]
 
     return label_values
+
 
 def get_data(data_path):
     train_path = data_path + '/leftImg8bit/train/'
@@ -152,6 +163,7 @@ def get_data(data_path):
 
     return X_train, y_train, X_val, y_val
 
+
 def one_hot_it(label, label_values):
     semantic_encoding = []
     # c = np.logical_and(np.not_equal(label, label_values[0]), np.not_equal(label, label_values[1]))
@@ -172,7 +184,6 @@ def reverse_one_hot(image):
 
 
 def colour_code_segmentation(image, label_values):
-
     label_matrix = np.array(label_values)
     x = label_matrix[image.astype(int)]
 
@@ -206,12 +217,18 @@ def random_crop(image, label, crop_height, crop_width):
         y = random.randint(0, image.shape[0] - crop_height)
 
         if len(label.shape) == 3:
-            return image[y:y + crop_height, x:x + crop_width, :], label[y:y + crop_height, x:x + crop_width, :]
+            return image[y:y + crop_height, x:x + crop_width, :], label[
+                                                                  y:y + crop_height,
+                                                                  x:x + crop_width,
+                                                                  :]
         else:
-            return image[y:y + crop_height, x:x + crop_width, :], label[y:y + crop_height, x:x + crop_width]
+            return image[y:y + crop_height, x:x + crop_width, :], label[
+                                                                  y:y + crop_height,
+                                                                  x:x + crop_width]
     else:
-        raise Exception('Crop shape (%d, %d) exceeds image dimensions (%d, %d)!' % (
-            crop_height, crop_width, image.shape[0], image.shape[1]))
+        raise Exception(
+            'Crop shape (%d, %d) exceeds image dimensions (%d, %d)!' % (
+                crop_height, crop_width, image.shape[0], image.shape[1]))
 
 
 def random_shadow(image):
@@ -234,6 +251,7 @@ def random_shadow(image):
     hls[:, :, 1][cond] = hls[:, :, 1][cond] * s_ratio
     return cv2.cvtColor(hls, cv2.COLOR_HLS2RGB)
 
+
 def random_brightness(image):
     """
     Randomly adjust brightness of the image.
@@ -248,32 +266,38 @@ def random_brightness(image):
 
 
 def rotation(input_image, output_image, degrees):
-    angle = random.uniform(-1*degrees, degrees)
-    M = cv2.getRotationMatrix2D((input_image.shape[1]//2, input_image.shape[0]//2), angle, 1.0)
-    input_image = cv2.warpAffine(input_image, M, (input_image.shape[1], input_image.shape[0]), flags=cv2.INTER_NEAREST)
-    output_image = cv2.warpAffine(output_image, M, (output_image.shape[1], output_image.shape[0]), flags=cv2.INTER_NEAREST)
+    angle = random.uniform(-1 * degrees, degrees)
+    M = cv2.getRotationMatrix2D(
+        (input_image.shape[1] // 2, input_image.shape[0] // 2), angle, 1.0)
+    input_image = cv2.warpAffine(input_image, M,
+                                 (input_image.shape[1], input_image.shape[0]),
+                                 flags=cv2.INTER_NEAREST)
+    output_image = cv2.warpAffine(output_image, M, (
+    output_image.shape[1], output_image.shape[0]), flags=cv2.INTER_NEAREST)
     return input_image, output_image
 
+
 def brightness(image, bright_0_1):
-            factor = 1.0 + random.uniform(-1.0*bright_0_1, bright_0_1)
-            table = np.array([((i / 255.0) * factor) * 255 for i in np.arange(0, 256)]).astype(np.uint8)
-            image = cv2.LUT(image, table)
-            return image
+    factor = 1.0 + random.uniform(-1.0 * bright_0_1, bright_0_1)
+    table = np.array(
+        [((i / 255.0) * factor) * 255 for i in np.arange(0, 256)]).astype(
+        np.uint8)
+    image = cv2.LUT(image, table)
+    return image
 
 
 def data_augmentation(input_image, output_image):
-
     if random.randint(0, 1):
         input_image = brightness(input_image, 0.5)
 
     if random.randint(0, 1):
         input_image = random_shadow(input_image)
 
-
     return input_image, output_image
 
 
-def gen_batch_function(samplesX, samplesY, label_values, batch_size=1, is_train=True):
+def gen_batch_function(samplesX, samplesY, label_values, batch_size=1,
+                       is_train=True):
     """
     F function to create batches of training data
     :param data_folder: Path to folder that contains all the datasets
@@ -310,13 +334,16 @@ def gen_batch_function(samplesX, samplesY, label_values, batch_size=1, is_train=
         y_f = np.float32(y_f)
         yield X_f, y_f
 
-def pipeline_final(img, sess, logits, keep_prob, input_image, image_shape, label_values, num_classes=29):
+
+def pipeline_final(img, sess, logits, keep_prob, input_image, image_shape,
+                   label_values, num_classes=29):
     channel = 1
-    img= cv2.resize(img, dsize=image_shape)
+    img = cv2.resize(img, dsize=image_shape)
     img = np.array([img])
     softmax_ = loss = sess.run([logits],
-                       feed_dict={input_image: img, keep_prob:1})
-    logits_ = (softmax_[0].reshape(1,image_shape[1],image_shape[0],num_classes))
+                               feed_dict={input_image: img, keep_prob: 1})
+    logits_ = (
+        softmax_[0].reshape(1, image_shape[1], image_shape[0], num_classes))
     output_image = reverse_one_hot(logits_[0])
 
     out_vis_image = colour_code_segmentation(output_image, label_values)
@@ -331,40 +358,45 @@ def pipeline_final(img, sess, logits, keep_prob, input_image, image_shape, label
     return added_image
 
 
-def process(media_dir, sess, logits, keep_prob, input_image, image_shape, label_values):
+def process(media_dir, sess, logits, keep_prob, input_image, image_shape,
+            label_values):
     img = load_image(media_dir)
-    img = pipeline_final(img, sess, logits, keep_prob, input_image, image_shape, label_values)
+    img = pipeline_final(img, sess, logits, keep_prob, input_image, image_shape,
+                         label_values)
     return img
 
 
-def gen_test_output(sess, logits, keep_prob, input_image, data_folder, image_shape, label_values):
-
+def gen_test_output(sess, logits, keep_prob, input_image, data_folder,
+                    image_shape, label_values):
     for image_file in glob(os.path.join(data_folder, '*.png')):
-        image = process(image_file, sess, logits, keep_prob, input_image, image_shape, label_values)
+        image = process(image_file, sess, logits, keep_prob, input_image,
+                        image_shape, label_values)
         yield os.path.basename(image_file), image
 
 
-def save_inference_samples(runs_dir, data_dir, sess, image_shape, logits, keep_prob, input_image, label_values):
-	"""
-	Save test images with semantic masks of lane predictions to runs_dir.
-	:param runs_dir: Directory to save output images
-	:param data_dir: Path to the directory that contains the datasets
-	:param sess: TF session
-	:param image_shape: Tuple - Shape of image
-	:param logits: TF Tensor for the logits
-	:param keep_prob: TF Placeholder for the dropout keep probability
-	:param input_image: TF Placeholder for the image placeholder
-	"""
-	# Make folder for current run
-	output_dir = os.path.join(runs_dir, str(time.time()))
-	if os.path.exists(output_dir):
-		shutil.rmtree(output_dir)
-	os.makedirs(output_dir)
+def save_inference_samples(runs_dir, data_dir, sess, image_shape, logits,
+                           keep_prob, input_image, label_values):
+    """
+    Save test images with semantic masks of lane predictions to runs_dir.
+    :param runs_dir: Directory to save output images
+    :param data_dir: Path to the directory that contains the datasets
+    :param sess: TF session
+    :param image_shape: Tuple - Shape of image
+    :param logits: TF Tensor for the logits
+    :param keep_prob: TF Placeholder for the dropout keep probability
+    :param input_image: TF Placeholder for the image placeholder
+    """
+    # Make folder for current run
+    output_dir = os.path.join(runs_dir, str(time.time()))
+    if os.path.exists(output_dir):
+        shutil.rmtree(output_dir)
+    os.makedirs(output_dir)
 
-	# Run NN on test images and save them to HD
-	print('Saving test images to: {}'.format(output_dir))
-	image_outputs = gen_test_output(
+    # Run NN on test images and save them to HD
+    print('Saving test images to: {}'.format(output_dir))
+    image_outputs = gen_test_output(
 
-		sess, logits, keep_prob, input_image, data_dir, image_shape, label_values)
-	for name, image in image_outputs:
-		scipy.misc.imsave(os.path.join(output_dir, name), image)
+        sess, logits, keep_prob, input_image, data_dir, image_shape,
+        label_values)
+    for name, image in image_outputs:
+        scipy.misc.imsave(os.path.join(output_dir, name), image)
