@@ -45,7 +45,7 @@ def load_vgg(sess, vgg_path):
 
 tests.test_load_vgg(load_vgg, tf)
 
-import keras
+import tensorflow.python.keras
 def layers(vgg_layer3_out, vgg_layer4_out, vgg_layer7_out, num_classes):
     """
     Create the layers for a fully convolutional network.  Build skip-layers using the vgg layers.
@@ -139,14 +139,15 @@ def run():
     tests.test_for_kitti_dataset(data_dir)
     epochs = 100
     batch_size = 10
-    # Download pretrained vgg model
-    helper.maybe_download_pretrained_vgg(data_dir)
+    # # Download pretrained vgg model
+    # helper.maybe_download_pretrained_vgg(data_dir)
 
     # OPTIONAL: Train and Inference on the cityscapes dataset instead of the Kitti dataset.
     # You'll need a GPU with at least 10 teraFLOPS to train on.
     #  https://www.cityscapes-dataset.com/
 
     with tf.Session() as sess:
+        # saved_model.pb
         # Path to vgg model
         vgg_path = os.path.join(data_dir, 'vgg')
         # Create function to get batches
